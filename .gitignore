@@ -1,2 +1,13 @@
-week1/hello_world
-week1/proof
+# Ignore compiled binaries
+hello_world
+proof
+
+# Ignore object files
+*.o
+
+# Ignore generic outputs
+*.out
+*.exe
+
+# Ignore editor junk
+*~
