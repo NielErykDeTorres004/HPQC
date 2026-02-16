@@ -55,11 +55,13 @@ int check_args(int argc, char **argv)
         {
                 num_pings = atoi(argv[1]);
         }
-        else
+        else // the number of arguments is incorrect
         {
                 // raise an error
                 fprintf(stderr, "ERROR: You did not provide num_pings!\n");
                 fprintf(stderr, "Correct use: mpirun -np 2 pingpong [NUM_PINGS]\n");
+
+                // and exit COMPLETELY
                 exit(-1);
         }
 
@@ -82,8 +84,8 @@ void check_uni_size(int uni_size)
         if (uni_size == required_uni_size)
         {
                 return;
-        }
-        else
+        } // end if (uni_size == required_uni_size)
+        else // i.e. uni_size != required_uni_size
         {
                 // Raise an error
                 fprintf(stderr, "ERROR: pingpong must be run with exactly %d processes.\n", required_uni_size);
@@ -115,7 +117,12 @@ void root_task(int num_pings)
 
                 // Root receives counter from client // pong
                 MPI_Recv(&counter, count, MPI_INT, source, tag, MPI_COMM_WORLD, &status);
-        }
+
+        } // end while (counter < num_pings)
+
+        // send stop signal to client
+        counter = -1;
+        MPI_Send(&counter, count, MPI_INT, dest, tag, MPI_COMM_WORLD);
 
         // get end_time
         double end_time = MPI_Wtime();
@@ -125,9 +132,9 @@ void root_task(int num_pings)
         double average_time = elapsed_time / (double)num_pings;
 
         // Root prints counter, elapsed_time and average_time
-        printf("Final counter = %d\n", counter);
-        printf("Elapsed time  = %.9f s\n", elapsed_time);
-        printf("Average time  = %.9f s per ping-pong\n", average_time);
+        printf("Final counter = %d\n", num_pings);
+        printf("Elapsed time = %.9f s\n", elapsed_time);
+        printf("Average time = %.9f s per ping-pong\n", average_time);
 }
 
 void client_task(void)
@@ -145,15 +152,17 @@ void client_task(void)
                 // Client receives counter
                 MPI_Recv(&counter, count, MPI_INT, source, tag, MPI_COMM_WORLD, &status);
 
+                // stop condition
+                if (counter < 0)
+                {
+                        break;
+                }
+
                 // Client increments counter by 1
                 counter = counter + 1;
 
                 // Client sends counter to Root // pong
                 MPI_Send(&counter, count, MPI_INT, dest, tag, MPI_COMM_WORLD);
 
-                // stop condition: once we have incremented to num_pings, root will exit
-                // but client doesn't know num_pings here, so we just keep going until MPI_Finalize.
-                // In practice, root will stop receiving and MPI will terminate the job cleanly.
-                // (This is fine for this practical.)
-        }
+        } // end while (1)
 }
