@@ -74,3 +74,19 @@ int main(int argc, char **argv)
 	ierror = MPI_Finalize();
 	return 0;
 }
+
+void root_task(int uni_size)
+{
+}
+
+void client_task(int my_rank, int uni_size)
+{
+}
+
+void check_uni_size(int uni_size)
+{
+}
+
+void check_task(int uni_size, int my_rank)
+{
+}
