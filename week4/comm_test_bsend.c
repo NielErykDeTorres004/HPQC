@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <mpi.h>
+#include <stdlib.h>
 
 // function declarations
 void root_task(int uni_size);
@@ -23,9 +24,21 @@ int main(int argc, char **argv)
 	ierror = MPI_Comm_rank(MPI_COMM_WORLD,&my_rank);
 	ierror = MPI_Comm_size(MPI_COMM_WORLD,&uni_size);
 
+	// create and attach MPI buffer for buffered sends
+	int buffer_size = (MPI_BSEND_OVERHEAD + sizeof(int)) * 2;
+	void *bsend_buffer = malloc(buffer_size);
+	MPI_Buffer_attach(bsend_buffer, buffer_size);
+
+
 	check_uni_size(uni_size);
 	check_task(uni_size, my_rank);
 
+
+	// detach and free MPI buffer
+	void *detached_buffer;
+	int detached_size;
+	MPI_Buffer_detach(&detached_buffer, &detached_size);
+	free(detached_buffer);
 
 	// finalise MPI
 	ierror = MPI_Finalize();
@@ -64,32 +77,30 @@ void root_task(int uni_size)
 
 void client_task(int my_rank, int uni_size)
 {
-        // creates and initialies transmission variables
-        int send_message, count, dest, tag;
-        send_message = dest = tag = 0;
-        count = 1;
+	// creates and initialies transmission variables
+	int send_message, count, dest, tag;
+	send_message = dest = tag = 0;
+	count = 1;
 
-        // sets the destination for the message
-        dest = 0; // destination is root
+	// sets the destination for the message
+	dest = 0; // destination is root
 
-        // creates the message
-        send_message = my_rank * 10;
+	// creates the message
+	send_message = my_rank * 10;
 
-        // internal timing for send
-        double start_time = MPI_Wtime();
+	// internal timing for send
+	double start_time = MPI_Wtime();
 
-	// sends the message with Ssend
-        MPI_Ssend(&send_message, count, MPI_INT, dest, tag, MPI_COMM_WORLD);
+	// sends the message
+	MPI_Bsend(&send_message, count, MPI_INT, dest, tag, MPI_COMM_WORLD);
 
-        double end_time = MPI_Wtime();
-        double elapsed_time = end_time - start_time;
+	double end_time = MPI_Wtime();
+	double elapsed_time = end_time - start_time;
 
-        // prints the message from the sender
-        printf("Hello, I am %d of %d. Sent %d to Rank %d. Send took %.9f s\n",
-                my_rank, uni_size, send_message, dest, elapsed_time);
-
+	// prints the message from the sender
+	printf("Hello, I am %d of %d. Sent %d to Rank %d. Send took %.9f s\n",
+			my_rank, uni_size, send_message, dest, elapsed_time);
 }
-
 
 void check_uni_size(int uni_size)
 {

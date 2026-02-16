@@ -64,30 +64,29 @@ void root_task(int uni_size)
 
 void client_task(int my_rank, int uni_size)
 {
-        // creates and initialies transmission variables
-        int send_message, count, dest, tag;
-        send_message = dest = tag = 0;
-        count = 1;
+	// creates and initialies transmission variables
+	int send_message, count, dest, tag;
+	send_message = dest = tag = 0;
+	count = 1;
 
-        // sets the destination for the message
-        dest = 0; // destination is root
+	// sets the destination for the message
+	dest = 0; // destination is root
 
-        // creates the message
-        send_message = my_rank * 10;
+	// creates the message
+	send_message = my_rank * 10;
 
-        // internal timing for send
-        double start_time = MPI_Wtime();
+	// internal timing for send
+	double start_time = MPI_Wtime();
 
-	// sends the message with Ssend
-        MPI_Ssend(&send_message, count, MPI_INT, dest, tag, MPI_COMM_WORLD);
+	// sends the message
+	MPI_Rsend(&send_message, count, MPI_INT, dest, tag, MPI_COMM_WORLD);
 
-        double end_time = MPI_Wtime();
-        double elapsed_time = end_time - start_time;
+	double end_time = MPI_Wtime();
+	double elapsed_time = end_time - start_time;
 
-        // prints the message from the sender
-        printf("Hello, I am %d of %d. Sent %d to Rank %d. Send took %.9f s\n",
-                my_rank, uni_size, send_message, dest, elapsed_time);
-
+	// prints the message from the sender
+	printf("Hello, I am %d of %d. Sent %d to Rank %d. Send took %.9f s\n",
+			my_rank, uni_size, send_message, dest, elapsed_time);
 }
 
 
