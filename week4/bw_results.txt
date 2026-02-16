@@ -1,0 +1,114 @@
+=== size=8 bytes ===
+Message size = 8 bytes
+Num pings    = 10000
+Elapsed time = 0.005746944 s
+Avg time     = 0.000000575 s per ping-pong
+Bandwidth    = 26.551 MiB/s (approx)
+=== size=16 bytes ===
+Message size = 16 bytes
+Num pings    = 10000
+Elapsed time = 0.008716487 s
+Avg time     = 0.000000872 s per ping-pong
+Bandwidth    = 35.011 MiB/s (approx)
+=== size=32 bytes ===
+Message size = 32 bytes
+Num pings    = 10000
+Elapsed time = 0.009334969 s
+Avg time     = 0.000000933 s per ping-pong
+Bandwidth    = 65.383 MiB/s (approx)
+=== size=64 bytes ===
+Message size = 64 bytes
+Num pings    = 10000
+Elapsed time = 0.008590234 s
+Avg time     = 0.000000859 s per ping-pong
+Bandwidth    = 142.104 MiB/s (approx)
+=== size=128 bytes ===
+Message size = 128 bytes
+Num pings    = 10000
+Elapsed time = 0.008911545 s
+Avg time     = 0.000000891 s per ping-pong
+Bandwidth    = 273.960 MiB/s (approx)
+=== size=256 bytes ===
+Message size = 256 bytes
+Num pings    = 10000
+Elapsed time = 0.010288289 s
+Avg time     = 0.000001029 s per ping-pong
+Bandwidth    = 474.599 MiB/s (approx)
+=== size=512 bytes ===
+Message size = 512 bytes
+Num pings    = 10000
+Elapsed time = 0.015324352 s
+Avg time     = 0.000001532 s per ping-pong
+Bandwidth    = 637.262 MiB/s (approx)
+=== size=1024 bytes ===
+Message size = 1024 bytes
+Num pings    = 10000
+Elapsed time = 0.014838660 s
+Avg time     = 0.000001484 s per ping-pong
+Bandwidth    = 1316.241 MiB/s (approx)
+=== size=2048 bytes ===
+Message size = 2048 bytes
+Num pings    = 10000
+Elapsed time = 0.019229942 s
+Avg time     = 0.000001923 s per ping-pong
+Bandwidth    = 2031.337 MiB/s (approx)
+=== size=4096 bytes ===
+Message size = 4096 bytes
+Num pings    = 10000
+Elapsed time = 0.091437006 s
+Avg time     = 0.000009144 s per ping-pong
+Bandwidth    = 854.413 MiB/s (approx)
+=== size=8192 bytes ===
+Message size = 8192 bytes
+Num pings    = 10000
+Elapsed time = 0.114850282 s
+Avg time     = 0.000011485 s per ping-pong
+Bandwidth    = 1360.467 MiB/s (approx)
+=== size=16384 bytes ===
+Message size = 16384 bytes
+Num pings    = 10000
+Elapsed time = 0.133412341 s
+Avg time     = 0.000013341 s per ping-pong
+Bandwidth    = 2342.362 MiB/s (approx)
+=== size=32768 bytes ===
+Message size = 32768 bytes
+Num pings    = 10000
+Elapsed time = 0.169634427 s
+Avg time     = 0.000016963 s per ping-pong
+Bandwidth    = 3684.394 MiB/s (approx)
+=== size=65536 bytes ===
+Message size = 65536 bytes
+Num pings    = 10000
+Elapsed time = 0.255880019 s
+Avg time     = 0.000025588 s per ping-pong
+Bandwidth    = 4885.102 MiB/s (approx)
+=== size=131072 bytes ===
+Message size = 131072 bytes
+Num pings    = 10000
+Elapsed time = 0.437062833 s
+Avg time     = 0.000043706 s per ping-pong
+Bandwidth    = 5720.001 MiB/s (approx)
+=== size=262144 bytes ===
+Message size = 262144 bytes
+Num pings    = 10000
+Elapsed time = 0.797767276 s
+Avg time     = 0.000079777 s per ping-pong
+Bandwidth    = 6267.492 MiB/s (approx)
+=== size=524288 bytes ===
+Message size = 524288 bytes
+Num pings    = 1000
+Elapsed time = 0.145533532 s
+Avg time     = 0.000145534 s per ping-pong
+Bandwidth    = 6871.269 MiB/s (approx)
+=== size=1048576 bytes ===
+Message size = 1048576 bytes
+Num pings    = 1000
+Elapsed time = 0.263949051 s
+Avg time     = 0.000263949 s per ping-pong
+Bandwidth    = 7577.220 MiB/s (approx)
+=== size=2097152 bytes ===
+Message size = 2097152 bytes
+Num pings    = 1000
+Elapsed time = 0.557675994 s
+Avg time     = 0.000557676 s per ping-pong
+Bandwidth    = 7172.624 MiB/s (approx)
