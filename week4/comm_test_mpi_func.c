@@ -1,6 +1,12 @@
 #include <stdio.h>
 #include <mpi.h>
 
+// function declarations
+void root_task(int uni_size);
+void client_task(int my_rank, int uni_size);
+void check_uni_size(int uni_size);
+void check_task(int uni_size, int my_rank);
+
 int main(int argc, char **argv) 
 {
 	// declare and initialise error handling variable
