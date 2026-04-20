@@ -86,7 +86,7 @@ The pingpong_bw program sends a malloc'd byte array and the client sends it stra
 | 256 KiB | 6267 MiB/s |
 | 1 MiB | 7577 MiB/s |
 
-Full data in bw_results.txt. Plots in bw_plot_linear.png and bw_plot_fit.png.
+Full data in bw_results.txt. Plots in bw_vs_size.png and time_vs_size_fit.png.
 
 Bandwidth generally increases with message size. For small messages latency overhead dominates. The notable drop at 4 KiB is probably where MPI switches from eager to rendezvous protocol (sender waits for receiver acknowledgement before sending). Above that it climbs again and levels off around 7 to 7.5 GiB/s.
 
