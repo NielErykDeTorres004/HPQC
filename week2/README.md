@@ -77,65 +77,52 @@ Python takes about 7x longer just to start up. At this scale the actual computat
 
 Testing with the first argument varied (this is the loop count):
 
-| Iterations | C (real) | Python (real) |
-|------------|----------|----------------|
-| 1,000,000  | 0.010s   | 0.081s         |
-| 5,000,000  | 0.022s   | 0.279s         |
-| 10,000,000 | 0.036s   | 0.527s         |
-| 50,000,000 | 0.147s   | 2.348s         |
-| 100,000,000| 0.262s   | 4.680s         |
+| Iterations  | C (real) | Python (real) |
+|-------------|----------|---------------|
+| 1,000,000   | 0.010s   | 0.081s        |
+| 5,000,000   | 0.022s   | 0.279s        |
+| 10,000,000  | 0.036s   | 0.527s        |
+| 50,000,000  | 0.147s   | 2.348s        |
+| 100,000,000 | 0.262s   | 4.680s        |
 
-Both scale roughly linearly with the number of iterations (O(n) as expected). C is about 17-18x faster at 100M iterations. The second argument has basically no effect on runtime since it's just used in the addition, not as a loop bound.
-
-If you swap the arguments (e.g. `repeat_adder 2 100000000`) the C version finishes almost instantly since it only loops twice.
+Both scale linearly which makes sense since its just a loop. C being ~17x faster than python at 100M was a bigger gap than I expected tbh. The second argument has no real effect on runtime — swapping them (e.g. `repeat_adder 2 100000000`) makes C finish almost instantly since it only loops twice.
 
 ### Screen printing – internal vs external timing
 
-10M iterations shown as a representative large case:
+| n          | C internal | C external | Python internal | Python external |
+|------------|------------|------------|-----------------|-----------------|
+| 100,000    | 0.027s     | 0.032s     | 0.068s          | 0.101s          |
+| 1,000,000  | 1.024s     | 0.980s     | 0.923s          | 0.957s          |
+| 10,000,000 | 10.329s    | 10.334s    | 10.879s         | 10.912s         |
 
-| Language | Internal time | External (real) |
-|----------|--------------|-----------------|
-| C        | 10.33s       | 10.33s          |
-| Python   | 10.88s       | 10.91s          |
+Both languages end up similarly slow here which surprised me — the bottleneck is just writing to the terminal so the language doesnt really matter. The C internal time at 1M coming out slightly higher than external is weird, probably just OS scheduling noise.
 
-For large inputs, internal and external times are nearly identical. The loop dominates. For small inputs (100k), external time is noticeably larger due to process startup overhead. Both languages are similarly slow here since the bottleneck is writing to the terminal, not the interpreter.
-
-Full print timing data:
-
-| n         | C internal | C external | Python internal | Python external |
-|-----------|------------|------------|-----------------|-----------------|
-| 100,000   | 0.027s     | 0.032s     | 0.068s          | 0.101s          |
-| 1,000,000 | 1.024s     | 0.980s     | 0.923s          | 0.957s          |
-| 10,000,000| 10.329s    | 10.334s    | 10.879s         | 10.912s         |
-
-(The C internal time being slightly higher than external for 1M is probably just measurement noise / OS scheduling.)
+For large n internal and external times converge, for small n external is noticeably higher because process startup overhead dominates.
 
 ### File I/O
 
-Write timing (output file was ~4.8KB at n=1000, ~58KB at n=10000):
+Write timing:
 
 | n      | C internal | C external | Python internal | Python external |
 |--------|------------|------------|-----------------|-----------------|
 | 1,000  | 0.000875s  | 0.007s     | 0.000592s       | 0.036s          |
 | 10,000 | 0.003585s  | 0.009s     | 0.002842s       | 0.034s          |
 
-Read timing (reading the 58KB file):
+Read timing (reading the ~58KB file produced at n=10000):
 
-| Language | Internal       | External |
-|----------|----------------|----------|
-| C        | 0.000079s      | 0.007s   |
-| Python   | 0.0000949s     | 0.035s   |
+| Language | Internal  | External |
+|----------|-----------|----------|
+| C        | 0.000079s | 0.007s   |
+| Python   | 0.000095s | 0.035s   |
 
-For file I/O, the internal times for both languages are very close — Python is not significantly slower once you strip out startup. The external times diverge a lot because Python's interpreter startup (~0.03s) completely swamps the actual read/write time.
+This was the most interesting result. Python looks about 4x slower externally but internally the two are nearly identical. Almost all of that difference is just interpreter startup (~0.03s) which is basically fixed regardless of what the program actually does. So Python isnt really slower at file I/O, it just looks that way when you time the whole process from outside.
 
 ---
 
 ## Conclusions
 
-The main things I found:
+C wins on raw compute by a significant margin (~17x for tight loops) but that gap mostly disappears for I/O tasks where the OS is the bottleneck. The internal vs external timing comparison was useful for separating out Python's startup cost from its actual execution speed — a lot of the "Python is slow" reputation probably comes from benchmarking short programs where the interpreter startup dominates rather than the computation itself.
 
-- Both languages scale linearly for simple loops, which makes sense given the O(n) structure
-- C is consistently faster for tight loops (roughly 17x at 100M iterations)
-- For I/O-heavy tasks like printing to screen or writing files, the gap between languages narrows or disappears. The bottleneck shifts to the OS
-- Internal timing isolates just the computation; external timing includes process startup. For small tasks the startup dominates, for large tasks they converge
-- Python's startup overhead (~30ms) makes it look much worse than it is for fast tasks — the interpreter cost is basically fixed regardless of what the program does
+The screen printing results were probably the most unexpected — I went in assuming C would be faster there too but both languages hit the same wall since theyre both just waiting on the terminal. The 1M C internal > external result is a bit odd and I dont have a great explanation for it beyond measurement noise.
+
+One thing to note is all of this was run on Cheetah and some of the shorter timings especially will vary a lot depending on system load at the time, so theyre not super reproducible.
