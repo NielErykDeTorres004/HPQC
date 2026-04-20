@@ -19,7 +19,7 @@ Timings with `time mpirun -np [N] bin/hello_mpi`:
 | 16 | 0.458    |
 
 With more processes user+sys starts to exceed real time, which is the parallel
-execution showing up. Runtime stays around 0.35-0.45s regardless of np though —
+execution showing up. Runtime stays around 0.35-0.45s regardless of np though,
 pretty much all MPI startup overhead at this scale.
 
 ---
@@ -97,7 +97,7 @@ the MPI version sits around 0.38-0.45s while serial is much faster.
 
 ### What this shows
 
-The problem is too lightweight for MPI to be worth it — summing integers is so fast
+The problem is too lightweight for MPI to be worth it. Summing integers is so fast
 that startup and communication overhead completely dominates. More processes doesn't
 help, it actually makes things slightly worse. Parallel isn't automatically faster; you
 need enough actual computation to justify the overhead.
