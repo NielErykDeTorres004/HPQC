@@ -85,7 +85,7 @@ Testing with the first argument varied (this is the loop count):
 | 50,000,000  | 0.147s   | 2.348s        |
 | 100,000,000 | 0.262s   | 4.680s        |
 
-Both scale linearly which makes sense since its just a loop. C being ~17x faster than python at 100M was a bigger gap than I expected tbh. The second argument has no real effect on runtime. Swapping them (e.g. `repeat_adder 2 100000000`) makes C finish almost instantly since it only loops twice.
+Both scale linearly which makes sense since its just a loop. C being ~17x faster than python at 100M was a bigger gap than I expected. The second argument has no real effect on runtime. Swapping them (e.g. `repeat_adder 2 100000000`) makes C finish almost instantly since it only loops twice.
 
 ### Screen printing – internal vs external timing
 
@@ -95,7 +95,7 @@ Both scale linearly which makes sense since its just a loop. C being ~17x faster
 | 1,000,000  | 1.024s     | 0.980s     | 0.923s          | 0.957s          |
 | 10,000,000 | 10.329s    | 10.334s    | 10.879s         | 10.912s         |
 
-Both languages end up similarly slow here which surprised me. The bottleneck is just writing to the terminal so the language doesnt really matter. The C internal time at 1M coming out slightly higher than external is weird, probably just OS scheduling noise.
+Both languages end up similarly slow here which surprised me. The bottleneck is just writing to the terminal so the language doesn't really matter. The C internal time at 1M coming out slightly higher than external is weird, probably just OS scheduling noise.
 
 For large n internal and external times converge, for small n external is noticeably higher because process startup overhead dominates.
 
@@ -115,7 +115,7 @@ Read timing (reading the ~58KB file produced at n=10000):
 | C        | 0.000079s | 0.007s   |
 | Python   | 0.000095s | 0.035s   |
 
-This was the most interesting result. Python looks about 4x slower externally but internally the two are nearly identical. Almost all of that difference is just interpreter startup (~0.03s) which is basically fixed regardless of what the program actually does. So Python isnt really slower at file I/O, it just looks that way when you time the whole process from outside.
+This was the most interesting result. Python looks about 4x slower externally but internally the two are nearly identical. Almost all of that difference is just interpreter startup (~0.03s) which is basically fixed regardless of what the program actually does. So Python isn,t really slower at file I/O, it just looks that way when you time the whole process from outside.
 
 ---
 
