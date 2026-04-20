@@ -21,19 +21,20 @@ int main(int argc, char **argv)
     MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
     MPI_Comm_size(MPI_COMM_WORLD, &uni_size);
 
-    // Root reads N, then broadcasts it so all ranks know the size
+    // rank 0 reads N from args then broadcasts so all ranks have it
     if (my_rank == 0)
         N = check_args(argc, argv);
 
     MPI_Bcast(&N, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
-    // Decide how many elements each rank gets (balanced, remainder distributed to first ranks)
+    // work out how many elements each rank gets
+    // if N doesn't divide evenly, give the extra elements to the first ranks
     int base = N / uni_size;
     int rem  = N % uni_size;
 
     int local_n = base + (my_rank < rem ? 1 : 0);
 
-    // Only root needs sendcounts/displs for Scatterv
+    // only root needs these for Scatterv
     int *sendcounts = NULL;
     int *displs = NULL;
     int *vec = NULL;
@@ -56,7 +57,7 @@ int main(int argc, char **argv)
             offset += sendcounts[r];
         }
 
-        // Allocate and fill full vector on root
+        // allocate and fill the full vector on root
         vec = (int*)malloc(N * sizeof(int));
         if (!vec)
         {
@@ -64,11 +65,12 @@ int main(int argc, char **argv)
             MPI_Abort(MPI_COMM_WORLD, -1);
         }
 
+        // fill with 0-99 repeating so its not all zeros
         for (int i = 0; i < N; i++)
-            vec[i] = i % 100;  // meaningful deterministic data
+            vec[i] = i % 100;
     }
 
-    // Allocate local buffer on every rank
+    // each rank needs its own chunk to work on
     int *local_vec = (int*)malloc(local_n * sizeof(int));
     if (!local_vec)
     {
@@ -76,24 +78,23 @@ int main(int argc, char **argv)
         MPI_Abort(MPI_COMM_WORLD, -1);
     }
 
-    // Scatter chunks to each rank
+    // scatter the vector chunks out to each rank
     MPI_Scatterv(vec, sendcounts, displs, MPI_INT,
                  local_vec, local_n, MPI_INT,
                  0, MPI_COMM_WORLD);
 
-    // Local sum
+    // sum up this rank's chunk
     long long local_sum = 0;
     for (int i = 0; i < local_n; i++)
         local_sum += local_vec[i];
 
-    // Reduce sums to root
+    // collect all the partial sums into one total on root
     long long global_sum = 0;
     MPI_Reduce(&local_sum, &global_sum, 1, MPI_LONG_LONG, MPI_SUM, 0, MPI_COMM_WORLD);
 
     if (my_rank == 0)
         printf("Sum: %lld\n", global_sum);
 
-    // Cleanup
     free(local_vec);
     if (my_rank == 0)
     {
